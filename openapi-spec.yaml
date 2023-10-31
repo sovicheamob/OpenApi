@@ -1,0 +1,169 @@
+openapi: 3.0.0
+info:
+  title: LOS_API for PD
+  version: 1.0.0
+servers:
+  - url: https://apicp-uat.phillipbank.com.kh
+  - url: https://apigw-uat.phillipbank.com.kh
+  - url: http://{{url}}
+components:
+  securitySchemes:
+    noauthAuth:
+      type: http
+      scheme: noauth
+paths:
+  /oauth2/token:
+    post:
+      tags:
+        - default
+      summary: Generate Token - LOS
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n    \"grant_type\": \"client_credentials\"\n}"'
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Basic Base64(consumer-key:consumer-secret)
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/customer/create:
+    post:
+      tags:
+        - default
+      summary: 2 - API CIF integrated to LOS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                basic:
+                  branch_code: '000'
+                  category: '01'
+                  family_name_kh: អូរាខល
+                  given_name_kh: បេងខីង
+                  family_name_en: MR
+                  given_name_en: SW Sovichea12
+                  gender: M
+                  dob: '1993-01-12'
+                  prefix: MR
+                  nationality: KH
+                  language: ENG
+                  education_status: G
+                  marital_status: M
+                  classification: 01-001
+                  phone_no: '087555666'
+                  email: Vichea03@gmail.com
+                  home_phone_no: '1111119999'
+                  spouse_name: Vichea03
+                correspondence_address:
+                  country: KH
+                  province: Phnom Penh
+                  district: Pur SenChey
+                  commune: Trapeang Krasang
+                  village: Phum 9 12040209
+                  house_no: NO.33
+                  street_no: ST.294
+                  group: CORNER ST.2
+                  pin_code: '120407'
+                identity:
+                  - id_type: PASSPORT
+                    id_no: '011234569'
+                    issue_date: '2020-09-01'
+                    expiry_date: '2025-09-01'
+                professional:
+                  career: F
+                  current_designation: BUSINESS OWNER
+                  length_of_business: '88'
+                  currency_of_amount: USD
+                  income: '168000'
+                  country: KH
+                  province: Kampong Chhnang
+                  district: TTeuk Phos
+                  commune: Akphivoth
+                  village: Other 12010100
+                  house_no: NO.333
+                  street_no: ST.999
+                  group: CORNER ST.9
+                  pin_code: '120407'
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/account/create:
+    post:
+      tags:
+        - default
+      summary: 4 - API CA-OD integrated to LOS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '014'
+                cif_no: '003366522'
+                acc_class: '105'
+                ccy: USD
+                type: U
+                country_code: KH
+                credit_officer: 171 - Battambang
+                purpose: Savings
+                staff_referal: 171 - Battambang
+                od_limit:
+                  amount: '1000'
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
