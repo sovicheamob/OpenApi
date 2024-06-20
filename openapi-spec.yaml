@@ -1,106 +1,50 @@
 openapi: 3.0.0
 info:
-  title: LOS_API for PD
+  title: LOS - APIM
   version: 1.0.0
 servers:
-  - url: https://apicp-uat.phillipbank.com.kh
   - url: https://apigw-uat.phillipbank.com.kh
-  - url: http://{{url}}
+  - url: https://apicp-uat.phillipbank.com.kh
 components:
   securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
     noauthAuth:
       type: http
       scheme: noauth
+tags:
+  - name: Customer
+  - name: Loan Application
+  - name: Loan Application > Creation
+  - name: Loan Application > Disburse
+  - name: Loan Application > Reverse
+  - name: Loan Application > Modify
+  - name: Collateral
+  - name: AML Integration
+  - name: CBC Integration
+  - name: Accounts - CASA for loan settlement
+  - name: Overdue Process
+  - name: LOV
+  - name: Mora
+  - name: Util
 paths:
-  /oauth2/token:
+  /cbs/v1/customer/search:
     post:
       tags:
-        - default
-      summary: Generate Token - LOS
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              type: string
-              example: '"{\n    \"grant_type\": \"client_credentials\"\n}"'
-      parameters:
-        - name: Authorization
-          in: header
-          schema:
-            type: string
-          example: Basic Base64(consumer-key:consumer-secret)
-        - name: Content-Type
-          in: header
-          schema:
-            type: string
-          example: application/json
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /cbs/v1/customer/create:
-    post:
-      tags:
-        - default
-      summary: 2 - API CIF integrated to LOS
+        - Customer
+      summary: 1.1 - Search duplicate customer
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                basic:
-                  branch_code: '000'
-                  category: '01'
-                  family_name_kh: អូរាខល
-                  given_name_kh: បេងខីង
-                  family_name_en: MR
-                  given_name_en: SW Sovichea12
-                  gender: M
-                  dob: '1993-01-12'
-                  prefix: MR
-                  nationality: KH
-                  language: ENG
-                  education_status: G
-                  marital_status: M
-                  classification: 01-001
-                  phone_no: '087555666'
-                  email: Vichea03@gmail.com
-                  home_phone_no: '1111119999'
-                  spouse_name: Vichea03
-                correspondence_address:
-                  country: KH
-                  province: Phnom Penh
-                  district: Pur SenChey
-                  commune: Trapeang Krasang
-                  village: Phum 9 12040209
-                  house_no: NO.33
-                  street_no: ST.294
-                  group: CORNER ST.2
-                  pin_code: '120407'
-                identity:
-                  - id_type: PASSPORT
-                    id_no: '011234569'
-                    issue_date: '2020-09-01'
-                    expiry_date: '2025-09-01'
-                professional:
-                  career: F
-                  current_designation: BUSINESS OWNER
-                  length_of_business: '88'
-                  currency_of_amount: USD
-                  income: '168000'
-                  country: KH
-                  province: Kampong Chhnang
-                  district: TTeuk Phos
-                  commune: Akphivoth
-                  village: Other 12010100
-                  house_no: NO.333
-                  street_no: ST.999
-                  group: CORNER ST.9
-                  pin_code: '120407'
-      security:
-        - noauthAuth: []
+                first_name: PHEN
+                last_name: Rady
+                dob: '1996-03-11'
+                id_no: '0123123124'
+                phone_no: '0019612120'
       parameters:
         - name: App-Code
           in: header
@@ -122,11 +66,1437 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /cbs/v1/account/create:
+  /cbs/v1/customer/creation:
     post:
       tags:
-        - default
-      summary: 4 - API CA-OD integrated to LOS
+        - Customer
+      summary: 1.2 - Create customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                basic:
+                  branch_code: '000'
+                  category: '01'
+                  family_name_kh: វិក
+                  given_name_kh: ចន
+                  family_name_en: Wick
+                  given_name_en: Jhon
+                  gender: M
+                  dob: '1992-01-12'
+                  prefix: MR
+                  education_status: G
+                  marital_status: M
+                  classification: 01-001
+                  phone_no: '087555666'
+                  home_phone_no: '023222222'
+                  work_phone_no: '078227777'
+                  spouse_name: Juthipter
+                  occupation: electrician
+                  email: mr_john@phillipbank.com.kh
+                  same_correspondence_address: 'N'
+                  same_permanent_address: 'N'
+                  profile_img: base64-image
+                  signature_img: base64-image
+                correspondence_address:
+                  country: KH
+                  province: Phnom Penh
+                  district: Pur SenChey
+                  commune: Trapeang Krasang
+                  village: Phum 9 12040209
+                  house_no: NO.33
+                  street_no: ST.294
+                  group: CORNER ST.2
+                  pin_code: '12345'
+                permanent_address:
+                  country: KH
+                  province: Battambang
+                  district: Battambang
+                  commune: Prek Preah Sdach
+                  village: 13 Meakkakra 02030203
+                  house_no: NO.33
+                  street_no: ST.294
+                  group: CORNER ST.2
+                  pin_code: '02030203'
+                domicile_address:
+                  country: KH
+                  province: Phnom Penh
+                  district: Tuol Kouk
+                  commune: Phsar Depou Ti Pir
+                  village: Phum 9 12040209
+                  house_no: NO.333
+                  street_no: ST.2943
+                  group: CORNER ST.23
+                  pin_code: '12040209'
+                identity:
+                  - id_type: PASSPORT
+                    id_no: '011234569'
+                    issue_date: '2020-09-01'
+                    expiry_date: '2025-09-01'
+                  - id_type: BIRTH CERTIFICATE
+                    id_no: '1112131415'
+                  - id_type: ALIEN REGISTRATION
+                    id_no: '12312312'
+                professional:
+                  career: F
+                  current_designation: BUSINESS OWNER
+                  length_of_business: '88'
+                  currency_of_amount: USD
+                  income: '168000'
+                  other: '5000'
+                  country: KH
+                  province: Kampong Chhnang
+                  district: TTeuk Phos
+                  commune: Akphivoth
+                  village: Other 12010100
+                  house_no: NO.333
+                  street_no: ST.999
+                  group: CORNER ST.9
+                  pin_code: '12345'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/customer/modification:
+    post:
+      tags:
+        - Customer
+      summary: 1.3 - Update customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '020'
+                cif_no: '003411273'
+                career: F
+                current_designation: XXX Company1234
+                length_of_business: '99'
+                currency_of_amount: USD
+                income: '30044'
+                country: KH
+                province: Phnom Penh4
+                district: Pur SenChey4
+                commune: haom Chau 4
+                village: Angk 12091613
+                house_no: NO.224
+                street_no: ST.164
+                group: CORNER ST.14
+                pin_code: '12091614'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/customer/info:
+    post:
+      tags:
+        - Customer
+      summary: 1.4 - Customer info
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cif_no: '003422386'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/settlement-instruction/creation:
+    post:
+      tags:
+        - Loan Application > Creation
+      summary: 2.2.1 - Create Settlement Instruction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '076'
+                cif_no: '003336198'
+                ccy: USD
+                payable_branch_code: '076'
+                receivable_branch_code: '076'
+                receivable_ccy: USD
+                product_code: '0105'
+                instruction_desc: DEFAULT
+                payable_account_no: '000043389'
+                receivable_account_no: '000043389'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/settlement-instruction/inquiry:
+    post:
+      tags:
+        - Loan Application > Creation
+      summary: 2.2.1.1 - Settlement Instruction Inquiry - Internal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '020'
+                cif_no: '002832666'
+                ccy: USD
+                product_code: '0131'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/settlement-instruction/accounts:
+    post:
+      tags:
+        - Loan Application > Creation
+      summary: 2.2.1.2 - Settlement Instruction - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '015'
+                cif_no: '002881224'
+                ccy: USD
+                product_code: '0134'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-account/creation:
+    post:
+      tags:
+        - Loan Application > Creation
+      summary: 2.2.2 - Create loan account - FLEXIBLE
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                method: FLEXIBLE
+                branch_code: '011'
+                product_code: '0101'
+                cif_no: '002831081'
+                value_date: '2023-10-20'
+                ccy: USD
+                amount_financed: '5000'
+                no_of_installment: '12'
+                due_date_on: '25'
+                frequency: '1'
+                frequency_unit: M
+                installment_start_date: '2023-10-25'
+                settlement_seq_no: '1'
+                other_applicants:
+                  - cif_no: '002830878'
+                    responsibility: BRW
+                    liability: '100'
+                    liability_amount: '1000'
+                    effective_date: '2023-10-20'
+                  - cif_no: '002830878'
+                    responsibility: GUA
+                    liability: '100'
+                    liability_amount: '1000'
+                    effective_date: '2023-10-20'
+                components:
+                  - name: MAIN_INT
+                    comp_sch:
+                      - unit: M
+                        formula_name: MAIN_INT_FRM_2
+                        first_due_date: '2024-01-25'
+                        emiamt: '500'
+                        frequency: '1'
+                        no_of_sch: '1'
+                      - unit: M
+                        formula_name: MAIN_INT_FRM_2
+                        first_due_date: '2024-05-25'
+                        emiamt: '600'
+                        frequency: '1'
+                        no_of_sch: '1'
+                      - unit: B
+                        formula_name: MAIN_INT_FRM_2
+                        first_due_date: '2024-10-14'
+                ude:
+                  cbc_charges: '3'
+                  loan_fees: '8'
+                  simple_int_rate: '9'
+                financials:
+                  - financial_type: Avg Payment of Debt after CBC
+                    financial_source: Business Omwer
+                    ccy: USD
+                    amount: '1000'
+                  - financial_type: Avg Payment of Debt after CBC
+                    financial_source: Business Omwer
+                    ccy: USD
+                    amount: '1000'
+                liabilities:
+                  - liability_type: ACLEDA BANK Plc
+                    account_type: Loan
+                    ccy: USD
+                    amount: '100'
+                    frequency: Monthly
+                    balance: '1000'
+                    comment: '10'
+                other_income:
+                  - income_type: '02010110'
+                    ccy: USD
+                    amount: '2000'
+                    frequency: Monthly
+                udf_char:
+                  credit_officer: 000 - Head Office
+                  loan_fund: STANDARD
+                  loan_purpose_1: '01020101'
+                  loan_purpose_2: '03010102'
+                  loan_purpose_3: '03010102'
+                  sub_loan_purpose: Sanitation
+                  loan_purpose_narrative: '01020101'
+                  source_income_narative: Working
+                  main_collateral_type: MAINCO004
+                  refinance: External Refinance
+                  credit_scoring: Good
+                  exposure_or_countparty_type: Sovereigns and Central Banks
+                  r_loan_approve_by: Chief Executive Officer
+                  c_loan_approve_by: Branch Manager
+                  msme_loan_approve_by: Micro Business Loan Manager
+                  credit_risk_rating: Fair
+                  company: this company
+                  developer: this developer
+                  garage: 'No'
+                  remark: 'No'
+                udf_num:
+                  sub_purpose_amount: '10'
+                  loan_purpose_amount_1: '10000'
+                  loan_purpose_amount_2: '10000'
+                  locked_period_days: '10'
+                  c_number_of_employee: '100'
+                  legal_registration: '0'
+                  total_biz_asset: '10000'
+                  yearly_turnover_biz: '10'
+                  purchased_property_value: '10000'
+                  risk_weighted_assets: '10'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-account/creation/authorization:
+    post:
+      tags:
+        - Loan Application > Creation
+      summary: 2.2.2 - Authorize Loan Creation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                user_id: SYSTEM
+                branch_code: '020'
+                account_no: '0200028326660504'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/maturity-date/inquiry:
+    post:
+      tags:
+        - Loan Application > Creation
+      summary: 2.4 - Maturity Date Inquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                product_code: '0134'
+                branch_code: '020'
+                value_date: 20-Nov-23
+                no_of_installment: '13'
+                frequency: '1'
+                first_due_date: 29-Nov-23
+                due_date_on: '29'
+                frequency_unit: M
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/disbursement/creation:
+    post:
+      tags:
+        - Loan Application > Disburse
+      summary: 2.2.3 - Create disbursement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '011'
+                account_no: '0110028310810010'
+                disbursements:
+                  - settl_ccy: USD
+                    settl_branch_code: '020'
+                    settl_amount: '500'
+                    settl_account_no: '000015010'
+                    net_debit: 'N'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/disbursement/reversal:
+    post:
+      tags:
+        - Loan Application > Disburse
+      summary: 2.2.3 - Reverse disbursement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '020'
+                account_no: '0200028326661007'
+                seq_no: '1'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/disbursement/creation/authorization:
+    post:
+      tags:
+        - Loan Application > Disburse
+      summary: 2.2.3 - Authorization Disbursement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                user_id: SYSTEM
+                branch_code: '020'
+                account_no: '0200028326661007'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/disbursement/info:
+    post:
+      tags:
+        - Loan Application > Disburse
+      summary: 2.2.3 - Disbursement Inquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                account_no: '0110033844980002'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-account/reversal:
+    post:
+      tags:
+        - Loan Application > Reverse
+      summary: 2.2.2 - Loan Reversal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                user_id: SYSTEM
+                branch_code: '020'
+                account_no: '0200028326660660'
+                version: ''
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-account/reversal/authorization:
+    post:
+      tags:
+        - Loan Application > Reverse
+      summary: 2.2.2 - Authorize Loan Reversal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                user_id: SYSTEM
+                branch_code: '020'
+                account_no: '0200028326660660'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/vami/info:
+    post:
+      tags:
+        - Loan Application > Modify
+      summary: 2.2.2.2 - Query loan - VAMI - Internal
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '020'
+                account_no: '0200028303620504'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-account/modification:
+    post:
+      tags:
+        - Loan Application > Modify
+      summary: 2.2.2.2 - Modify loan - VAMI - AFTER_DISBURSE
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                method: AFTER_DISBURSE
+                branch_code: '020'
+                account_no: '0200028326660660'
+                amend_date: '2023-09-08'
+                udf_char:
+                  credit_officer: 00002 - ONG Teong Hoon
+                  loan_fund: STANDARD
+                  loan_purpose_1: '01020101'
+                  loan_purpose_2: '03010102'
+                  loan_purpose_3: '03010102'
+                  sub_loan_purpose: Sanitation
+                  loan_purpose_narrative: '01020101'
+                  source_income_narative: Working
+                  main_collateral_type: MAINCO004
+                  refinance: External Refinance
+                  credit_scoring: Good
+                  exposure_or_countparty_type: Sovereigns and Central Banks
+                  r_loan_approve_by: Chief Executive Officer
+                  msme_loan_approve_by: Micro Business Loan Manager
+                  credit_risk_rating: Fair
+                  company: this company
+                  developer: this developer
+                  garage: 'No'
+                  remark: 'No'
+                udf_num:
+                  sub_purpose_amount: '11'
+                  loan_purpose_amount_1: '10010'
+                  loan_purpose_amount_2: '10100'
+                  locked_period_days: '110'
+                  c_number_of_employee: '110'
+                  legal_registration: '0'
+                  total_biz_asset: '10010'
+                  yearly_turnover_biz: '101'
+                  purchased_property_value: '100001'
+                  risk_weighted_assets: '101'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-account/modification/authorization:
+    post:
+      tags:
+        - Loan Application > Modify
+      summary: 2.2.2.2 - Authorize Loan Modification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                user_id: FLEXMBD
+                branch_code: '020'
+                account_no: '0200028326660660'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/search-loan:
+    post:
+      tags:
+        - Loan Application
+      summary: 2.1 - Search Existing Loan
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cif_no: '002832666'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-detail:
+    post:
+      tags:
+        - Loan Application
+      summary: 2.1.1 - Loan Detail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                account_no: '0000028905950003'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/get-loan-schedule:
+    post:
+      tags:
+        - Loan Application
+      summary: 2.3 - Get Schedule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                account_no: '0000028889921229'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /report/v1/loan-repayment-schedule:
+    get:
+      tags:
+        - Loan Application
+      summary: 2.4 - Loan Repayment Schedule
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+        - name: IC_ACC_NO
+          in: query
+          schema:
+            type: integer
+          example: '0140030892740005'
+        - name: IC_OVER_DUE_TXN
+          in: query
+          schema:
+            type: string
+          example: 'Y'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/loan-versions:
+    post:
+      tags:
+        - Loan Application
+      summary: 2.5 - Loan Versions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '012'
+                account_no: '0120034230950001'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/elcm/collateral/search-profile:
+    post:
+      tags:
+        - Collateral
+      summary: 3.1 - Dedupe Collateral Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cif_no: '002838045'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/elcm/collateral/info:
+    post:
+      tags:
+        - Collateral
+      summary: 3.1.1 - Collateral Detail Information
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                collateral_id: '175426'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/elcm/collateral/creation:
+    post:
+      tags:
+        - Collateral
+      summary: 3.2 - Create Collateral Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '014'
+                liability_no: '002838045'
+                collateral_code: '00283804502_19'
+                collateral_desc: HARD TITLE 12020312-0013
+                collateral_value: '100'
+                start_date: '2023-09-08'
+                category_name: '00104'
+                remark: ''
+                ownership: Borrower
+                owner_name: ជុំ នាង
+                co_owner_name: យឿន រ៉េន
+                issue_level: VILLAGE
+                issue_date: '2006-09-20'
+                collateral_storage: Branch
+                exposure_type: Retail Loan
+                collateral_title: '00101'
+                address: ភូមិទ័ព ឃុំសូភាស ស្រុកស្ទឹងត្រង់ ខេត្តកំពង់ចាម
+                village: 13 Meakkakra 02030203
+                developer: DEV002
+                hypotec_date: '2023-09-08'
+                build_up_area: '1968'
+                land_area: Cambodia
+                building_status: Under Construction
+                collateral_code_desc: COL003
+                building_age: ''
+                valuation_date: '2023-09-08'
+                land_price: '1000'
+                building_price: '2000'
+                land_and_building_price: '3000'
+                agency_name: AG001
+                purchase_by_loan: Purchased
+                reval_date: '2024-01-17'
+                reval_collateral: 'Y'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/elcm/collateral/modification:
+    post:
+      tags:
+        - Collateral
+      summary: 3.3 - Update Existing Collateral Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '014'
+                liability_no: '002838045'
+                collateral_code: '00283804502_19'
+                collateral_value: '168'
+                valuation_date: '2023-09-08'
+                land_price: '169'
+                building_price: '170'
+                hypotec_date: '2023-09-08'
+                reval_date: '2024-01-17'
+                reval_collateral: 'Y'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/elcm/collateral/closing:
+    post:
+      tags:
+        - Collateral
+      summary: 3.5 - Withdraw and Closed the Collateral Status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '999'
+                liability_no: '002947223'
+                collateral_code: '003325292_2'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/customer/aml-status:
+    post:
+      tags:
+        - AML Integration
+      summary: AML status
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cif_no:
+                  - '002830921'
+                  - '002831588'
+                  - '002830369'
+                  - '002830870'
+                  - '002830368'
+                  - '002830871'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbc/v1/inquiry:
+    post:
+      tags:
+        - CBC Integration
+      summary: 5.1 - CBC - Account Detail Inquiry
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: >-
+                "{\n    \"home_branch\": \"000\",\n    \"checker\":
+                \"tester\",\n    \"enquiry_type\": \"NA\",\n    \"cbc_fee\":
+                0.18,\n    \"product_code\": \"CM05\",\n    \"loan_purpose\":
+                \"02031103\",\n    \"product_type\": \"RVL\",\n   
+                \"enquiry_reference\": \"0112303270002540\",\n    \"amount\":
+                500,\n    \"ccy\": \"USD\",\n    \"borrower\": [\n       
+                {\n            \"index\": 0,\n            \"application_type\":
+                \"P\",\n            \"cif\": \"003354311\",\n           
+                \"nationality_code\": \"KHM\",\n            \"country\":
+                \"KHM\",\n            \"id_type_1\": \"N\",\n           
+                \"id_number_1\": \"121343542\",\n           
+                \"id_expiry_date_1\": \"\",\n            \"date_of_birth\":
+                \"2000-01-01\",\n            \"id_type_2\": null,\n           
+                \"id_number_2\": \"\",\n            \"id_expiry_date_2\":
+                \"\",\n            \"gender\": \"M\",\n           
+                \"id_type_3\": null,\n            \"id_number_3\":
+                \"\",\n            \"id_expiry_date_3\": \"\",\n           
+                \"marital_status\": \"M\",\n            \"last_khmer_name\":
+                \"បូនី\",\n            \"first_khmer_name\":
+                \"សុខ\",\n            \"last_english_name\":
+                \"Sokh\",\n            \"first_english_name\":
+                \"Bony\",\n            \"domicile_province\": \"Tboung
+                Khmum\",\n            \"domicile_district\": \"Tboung
+                Khmum\",\n            \"domicile_commune\": \"Chirou Ti
+                Pir\",\n            \"domicile_village\": \"Aekkapheap
+                25070504\",\n            \"domicile_village_other_kh\":
+                \"\",\n            \"address_type\": \"RESID\",\n           
+                \"address_line_1\": null,\n            \"permanent_country\":
+                \"KHM\",\n            \"permanent_city\": \"09\",\n           
+                \"permanent_province\": \"Kratie\",\n           
+                \"permanent_district\": \"Chhloung\",\n           
+                \"permanent_commune\": \"Damrei Phong\",\n           
+                \"permanent_village\": \"27 Sen Chey 10010209\",\n           
+                \"permanent_village_other_kh\": \"\",\n           
+                \"permanent_postal_code\": \"\",\n           
+                \"phone_number_type_1\": \"M\",\n            \"country_code_1\":
+                \"855\",\n            \"area_code_1\": null,\n           
+                \"phone_number_1\": \"012334455\",\n           
+                \"phone_number_type_2\": null,\n            \"country_code_2\":
+                null,\n            \"area_code_2\": null,\n           
+                \"phone_number_2\": \"\",\n            \"employment_type\":
+                \"C\",\n            \"self_employed\": \"N\",\n           
+                \"length_of_service\": \"25\",\n            \"occupation\":
+                \"01-004\",\n            \"employer_name\": \"ABC
+                Company\",\n            \"total_monthly_income\":
+                \"100\",\n            \"currency\": \"USD\",\n           
+                \"employer_address_type\": \"RESID\",\n           
+                \"employer_postal_code\": \"\",\n           
+                \"employer_address_line_1\": \"\",\n           
+                \"employer_country_code\": \"KHM\",\n           
+                \"employer_city\": null,\n            \"employer_province\":
+                \"Battambang\",\n            \"employer_district\":
+                \"Battambang\",\n            \"employer_commune\": \"Prek Preah
+                Sdach\",\n            \"employer_village\": \"13 Meakkakra
+                02030203\",\n            \"employer_village_other_kh\":
+                \"\",\n            \"form_status\": \"ACT\"\n        }\n   
+                ],\n    \"co_borrower\": [],\n    \"guarantor\": []\n}"
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbc/v1/report:
+    post:
+      tags:
+        - CBC Integration
+      summary: 5.2 - CBC Report
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\r\n    \"enquiry_reference\": \"1460032883450003\"\r\n}"'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: Accept
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /los/v1/accounts:
+    post:
+      tags:
+        - Accounts - CASA for loan settlement
+      summary: 6.1 - Account Inquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cif_no: '003330530'
+      security:
+        - noauthAuth: []
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS-MORA
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/account/creation:
+    post:
+      tags:
+        - Accounts - CASA for loan settlement
+      summary: 6.3 - Create CA-OD
       requestBody:
         content:
           application/json:
@@ -151,6 +1521,40 @@ paths:
           in: header
           schema:
             type: string
+          example: LOS-MORA
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/corporate-lending/get-loan-late-listing:
+    post:
+      tags:
+        - Overdue Process
+      summary: PDP (Past Due Payment)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                cif_no: '002836642'
+                credit_officer: 02166 - NOUN Vichet
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
           example: LOS
         - name: Correlation-Id
           in: header
@@ -162,6 +1566,139 @@ paths:
           schema:
             type: string
           example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/lov/query:
+    post:
+      tags:
+        - LOV
+      summary: Query LOV - Loan component
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                option: PRODUCT_COMPO_FORMULA
+                component_name: MAIN_INT
+                product_code: '0435'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /los/v1/loan-approval:
+    post:
+      tags:
+        - Mora
+      summary: Loan approval
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                reference: CU002301
+                bank_customer_id: '1232'
+                upgrade_acc_status: Approve
+                customer_acc: '000049241'
+                credit_limit: 500
+                reason: In case reject only
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /cbs/v1/util/branch-info:
+    post:
+      tags:
+        - Util
+      summary: Branch info
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                branch_code: '012'
+      parameters:
+        - name: App-Code
+          in: header
+          schema:
+            type: string
+          example: LOS
+        - name: Correlation-Id
+          in: header
+          schema:
+            type: string
+          example: '{{$randomUUID}}'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /oauth2/token:
+    post:
+      tags:
+        - default
+      summary: Generate Token
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: '"{\n    \"grant_type\": \"client_credentials\"\n}"'
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          example: Basic Base64(consumer-key:consumer-secret)
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
       responses:
         '200':
           description: Successful response
